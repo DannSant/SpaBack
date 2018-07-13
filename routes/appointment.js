@@ -85,6 +85,8 @@ app.post('/appointment/make', verificaToken, (req, res) => {
         branchOffice: body.branchOffice
     });
 
+    appointment.creationDate = new Date();
+
     appointment.save((error, appointment) => {
 
         if (error) {
@@ -144,6 +146,62 @@ app.post('/appointment/getByDate', verificaToken, (req, res) => {
                     data: appointments
                 });
             });
+
+        });
+});
+
+app.post('/appointment/current', verificaToken, (req, res) => {
+
+    let user = req.usuario;
+    let currentDate = new Date();
+    Appointment.find({ "date": { "$gte": currentDate } }, { "user": user._id })
+        .populate('user', 'name email cellphone')
+        .populate('therapist')
+        .populate('service')
+        .populate('branchOffice')
+        .select('user date status price therapist service branchOffice creationDate')
+        .exec((error, appointments) => {
+            if (error) {
+                return res.status(400).json({
+                    ok: false,
+                    error
+                });
+            }
+
+            res.json({
+                ok: true,
+                data: appointments
+            });
+
+
+
+        });
+});
+
+app.post('/appointment/past', verificaToken, (req, res) => {
+
+    let user = req.usuario;
+    let currentDate = new Date();
+    Appointment.find({ "date": { "$lt": currentDate } }, { "user": user._id })
+        .populate('user', 'name email cellphone')
+        .populate('therapist')
+        .populate('service')
+        .populate('branchOffice')
+        .select('user date status price therapist service branchOffice creationDate')
+        .exec((error, appointments) => {
+            if (error) {
+                return res.status(400).json({
+                    ok: false,
+                    error
+                });
+            }
+
+            res.json({
+                ok: true,
+                data: appointments
+            });
+
+
 
         });
 });

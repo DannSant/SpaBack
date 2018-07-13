@@ -14,7 +14,7 @@ var appointmentSchema = new Schema({
     therapist: { type: Schema.Types.ObjectId, ref: 'Therapist', default: null },
     service: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
     branchOffice: { type: Schema.Types.ObjectId, ref: 'BranchOffice', required: true },
-
+    creationDate: { type: Date },
 });
 
 
