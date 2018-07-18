@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const _ = require('underscore');
 const app = express();
 const Usuario = require('../models/user')
-
+const { verificaToken, verificaAdmin } = require('../middlewares/auth')
 
 
 
@@ -52,6 +52,18 @@ app.post('/login', (req, res) => {
 
 
     });
+});
+
+app.post('/validateToken', verificaToken, (req, res) => {
+    let user = req.usuario;
+    let token = jwt.sign({
+        usuario: user
+    }, process.env.SEED, { expiresIn: process.env.CADUCIDAD_TOKEN });
+    res.json({
+        ok: true,
+        data: user,
+        token
+    })
 });
 
 module.exports = app;

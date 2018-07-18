@@ -31,7 +31,7 @@ app.get('/service', verificaToken, (req, res) => {
         })
 })
 
-app.get('/service/all', verificaToken, (req, res) => {
+app.get('/service/all', (req, res) => {
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
