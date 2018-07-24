@@ -104,7 +104,7 @@ app.put('/serviceDay/:id', [verificaToken], function(req, res) {
     let body = _.pick(req.body, ['day_desc', 'branchOffice', 'businessHours']);
     //console.log(req.body);
 
-    ServiceDay.findByIdAndUpdate(code, body, { new: true, runValidators: true }, (error, serviceDayDB) => {
+    ServiceDay.findById(code, (error, serviceDayDB) => {
         if (error) {
             return res.status(409).json({
                 ok: false,
@@ -121,12 +121,24 @@ app.put('/serviceDay/:id', [verificaToken], function(req, res) {
             })
         }
 
-        res.json({
-            ok: true,
-            data: serviceDayDB
-        });
+        serviceDayDB.day_desc = body.day_desc;
+        serviceDayDB.branchOffice = body.branchOffice;
+        serviceDayDB.businessHours = body.businessHours;
 
-    });
+        serviceDayDB.save((err, savedServiceDay) => {
+            if (err) {
+                return res.status(409).json({
+                    ok: false,
+                    error: err
+                })
+            }
+            res.json({
+                ok: true,
+                data: serviceDayDB
+            });
+        })
+    })
+
 });
 
 

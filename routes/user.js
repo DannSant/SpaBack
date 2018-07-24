@@ -137,8 +137,16 @@ app.post('/user/delete/:id', [verificaToken], function(req, res) {
 //=======================
 app.put('/user/:id', [verificaToken], function(req, res) {
     let code = req.params.id;
-    let body = _.pick(req.body, ['name', 'email', 'cellphone', 'sex']);
-    //console.log(req.body);
+    let body = {};
+
+    if (req.body.password == '') {
+        body = _.pick(req.body, ['name', 'cellphone', 'sex', 'role']);
+    } else {
+        body = _.pick(req.body, ['name', 'cellphone', 'sex', 'role', 'password']);
+        body.password = bcrypt.hashSync(body.password, 10);
+    }
+
+    //console.log(body);
 
     User.findByIdAndUpdate(code, body, { new: true, runValidators: true }, (error, usuarioDB) => {
         if (error) {
